@@ -1,12 +1,13 @@
-const CheckWithMouseOver = function() {};
+const targetName = 'input[type="checkbox"], input[type="radio"]';
+const CheckWithMouseOver = function () { };
 CheckWithMouseOver.prototype.start = () => {
   const body = document.body;
   if (!body) return setTimeout(CheckWithMouseOver.prototype.start, 500);
   CheckWithMouseOver.prototype.event();
   CheckWithMouseOver.prototype.observer(body);
 };
-CheckWithMouseOver.prototype.event = () => {
-  const inputs = document.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+CheckWithMouseOver.prototype.event = (mutations) => {
+  const inputs = document.querySelectorAll(targetName);
   if (inputs) CheckWithMouseOver.prototype.eventInput(inputs);
   const labels = document.querySelectorAll('label');
   if (labels) CheckWithMouseOver.prototype.eventLabel(labels);
@@ -29,7 +30,7 @@ CheckWithMouseOver.prototype.eventLabel = (labels) => {
       }
     } else {
       label.onmouseover = (e) => {
-        const elm = e.target.querySelector('input[type="checkbox"], input[type="radio"]');
+        const elm = e.target.querySelector(targetName);
         CheckWithMouseOver.prototype.checked(elm);
       }
     }
@@ -39,7 +40,7 @@ CheckWithMouseOver.prototype.checked = (elm) => {
   if (elm && window.event.altKey) elm.checked = !elm.checked;
 };
 CheckWithMouseOver.prototype.observer = (elm) => {
-  const observer = new MutationObserver((m) => CheckWithMouseOver.prototype.event());
+  const observer = new MutationObserver((mutations) => CheckWithMouseOver.prototype.event(mutations));
   observer.observe(elm, {
     childList: true,
     subtree: true

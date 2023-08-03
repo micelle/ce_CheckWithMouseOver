@@ -37,6 +37,7 @@ CheckWithMouseOver.prototype.eventLabel = (labels) => {
   });
 };
 CheckWithMouseOver.prototype.checked = (elm) => {
+  if (elm.disabled || elm.readOnly) return;
   if (elm && window.event.altKey) elm.checked = !elm.checked;
 };
 CheckWithMouseOver.prototype.observer = (elm) => {

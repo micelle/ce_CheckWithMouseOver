@@ -39,8 +39,10 @@ CheckWithMouseOver.prototype.start = () => {
   CheckWithMouseOver.prototype.observer(body);
   // iframe, frame
   document.querySelectorAll('iframe, frame').forEach(elm => {
-    if (!checkeHost(elm)) return
-    CheckWithMouseOver.prototype.observer(elm.contentWindow.document.body)
+    //if (!checkeHost(elm)) return
+    try {
+      CheckWithMouseOver.prototype.observer(elm.contentWindow.document.body)
+    } catch (error) { }
   })
 };
 CheckWithMouseOver.prototype.event = (mutations) => {
@@ -50,40 +52,43 @@ CheckWithMouseOver.prototype.event = (mutations) => {
   if (labels) CheckWithMouseOver.prototype.eventLabel(labels);
   // iframe, frame
   document.querySelectorAll('iframe, frame').forEach(elm => {
-    if (!checkeHost(elm)) return
-    const frameInputs = elm.contentWindow.document.querySelectorAll(targetName)
-    if (frameInputs) CheckWithMouseOver.prototype.eventInput(frameInputs)
-    const frameLabels = elm.contentWindow.document.querySelectorAll('label')
-    if (frameLabels) CheckWithMouseOver.prototype.eventLabel(frameLabels)
+    //if (!checkeHost(elm)) return
+    try {
+      const frameInputs = elm.contentWindow.document.querySelectorAll(targetName)
+      if (frameInputs.length) CheckWithMouseOver.prototype.eventInput(frameInputs)
+      const frameLabels = elm.contentWindow.document.querySelectorAll('label')
+      if (frameLabels.length) CheckWithMouseOver.prototype.eventLabel(frameLabels)
+    } catch (error) { }
   })
 };
 CheckWithMouseOver.prototype.eventInput = (inputs) => {
   inputs.forEach((input) => {
     input.onmouseover = (e) => {
       const elm = e.target;
-      CheckWithMouseOver.prototype.checked(elm);
+      if (e.altKey) CheckWithMouseOver.prototype.checked(elm);
     }
   });
 };
 CheckWithMouseOver.prototype.eventLabel = (labels) => {
   labels.forEach((label) => {
-    const attr = label.getAttribute('for');
-    if (attr) {
+    if (label.htmlFor) {
       label.onmouseover = (e) => {
-        const elm = document.getElementById(attr);
-        CheckWithMouseOver.prototype.checked(elm);
+        const htmlFor = e.target.htmlFor
+        const htmlForElm = document.getElementById(htmlFor) || e.view.document.getElementById(htmlFor);
+        if (e.altKey) CheckWithMouseOver.prototype.checked(htmlForElm);
       }
     } else {
       label.onmouseover = (e) => {
         const elm = e.target.querySelector(targetName);
-        CheckWithMouseOver.prototype.checked(elm);
+        if (e.altKey) CheckWithMouseOver.prototype.checked(elm);
       }
     }
   });
 };
 CheckWithMouseOver.prototype.checked = (elm) => {
   if (elm === null || elm.disabled || elm.readOnly) return;
-  if (elm && window.event.altKey) elm.checked = !elm.checked;
+  elm.checked = !elm.checked;
+  //if (elm && window.event.altKey) elm.checked = !elm.checked;
 };
 CheckWithMouseOver.prototype.observer = (elm) => {
   const observer = new MutationObserver((mutations) => CheckWithMouseOver.prototype.event(mutations));
